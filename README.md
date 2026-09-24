@@ -1,76 +1,180 @@
 # 💧 AquaGuardian — Smart Water Drinking Reminder System
 
 <p align="center">
-  <b>RTC-Based Hydration Monitoring & Reminder System using LPC2148</b>
+  <b>RTC-Based Smart Hydration Reminder and Water Intake Monitoring System using LPC2148</b>
 </p>
 
 <p align="center">
-  <img src="docs/images/lcd-reminder.png" alt="AquaGuardian hydration reminder LCD" width="650">
+  <img src="docs/images/block-diagram.png" alt="AquaGuardian system block diagram" width="850">
 </p>
-
-AquaGuardian is an embedded hydration-monitoring system developed around the **NXP LPC2148 ARM7 microcontroller**. It uses a Real-Time Clock (RTC) to schedule drinking reminders, tracks the user's daily water intake, displays hydration information on a 16×2 LCD, and provides visual and audible alerts through LEDs and a buzzer.
-
-The firmware is written in **Embedded C** and organized into separate peripheral/application modules for the LCD, keypad, RTC, delays, external interrupt, display logic, reminder logic, and hydration confirmation.
 
 ---
 
 ## 📖 1. Project Overview
 
-### Objective
+**AquaGuardian** is an embedded water-drinking reminder and daily hydration monitoring system developed using the **LPC2148 ARM7 microcontroller**.
 
-The objective of AquaGuardian is to encourage regular water consumption by automatically reminding the user at scheduled intervals and tracking progress toward a configurable daily hydration goal.
+The system uses a **Real-Time Clock (RTC)** to maintain time and schedule hydration reminders. It tracks the number of glasses consumed during the day and displays the current time, consumed glasses, and remaining daily target on a **16×2 LCD**.
 
-### Problem Addressed
+The user can interact with the system through a **4×4 matrix keypad**, a dedicated **Drink button**, and a configuration switch connected to an **external interrupt**.
 
-People may forget to drink water regularly during work, study, or daily activities. AquaGuardian provides a simple standalone embedded solution that combines:
+Visual and audible feedback is provided using:
 
-- RTC-based scheduling
-- Automatic hydration reminders
-- Daily water-intake tracking
-- LCD-based information
-- LED status indication
-- Audible alerts
-- Keypad-based configuration
-- External-interrupt-driven menu access
+- 🟢 Green LED
+- 🟡 Yellow LED
+- 🔴 Red LED
+- 🔊 Buzzer
+- 📺 16×2 LCD
 
-### Scope
-
-The current system can:
-
-- Maintain and display the current RTC time.
-- Generate periodic hydration reminders.
-- Record water consumption through a Drink button.
-- Maintain a configurable daily goal.
-- Display consumed and remaining glasses.
-- Allow RTC and goal settings to be modified through a keypad menu.
-- Indicate hydration status using Green, Yellow, and Red LEDs.
-- Use a buzzer for reminder alerts.
-- Reset daily tracking at midnight.
+The firmware is written in **Embedded C** using separate modules for peripheral drivers and application functionality.
 
 ---
 
-## ✨ 2. Features & Functionality
+## 🎯 2. Aim
+
+To develop an **AquaGuardian Smart Water Drinking Reminder System** that automatically reminds users to drink water at regular intervals using an RTC, monitors daily water intake, tracks hydration progress, and provides LCD, LED, and audible notifications.
+
+---
+
+## 📌 3. Objectives
+
+- Display the current time obtained from the RTC on the LCD.
+- Generate automatic drinking reminders at regular intervals.
+- Allow the user to record water consumption using a Drink button.
+- Maintain a configurable daily water-intake goal.
+- Compare RTC time with scheduled reminder intervals.
+- Display consumed and remaining glasses on the LCD.
+- Provide different LED indications for hydration status.
+- Generate buzzer alerts when a reminder is due.
+- Automatically reset daily water-consumption tracking at midnight.
+- Provide a keypad-based menu for changing RTC and hydration settings.
+
+---
+
+## ✨ 4. Features
 
 | Feature | Description |
 |---|---|
-| ⏰ RTC Timekeeping | Maintains current time and provides the timing reference for reminders |
-| 💧 Intake Tracking | Counts confirmed glasses consumed during the day |
-| 🎯 Daily Goal | Configurable number of glasses/goals |
-| 🔔 Reminder System | Activates a hydration reminder at the scheduled interval |
-| 📺 16×2 LCD | Displays time, progress, menus, and reminder messages |
-| ⌨️ 4×4 Keypad | Used for configuration and numeric input |
-| ⚡ External Interrupt | Opens the configuration menu through a dedicated switch |
-| 🔊 Buzzer | Provides audible reminder feedback |
-| 🟡 Yellow LED | Indicates reminder / time-to-drink state |
-| 🟢 Green LED | Indicates goal achieved |
-| 🔴 Red LED | Indicates missed/behind hydration state |
-| 🌙 Midnight Reset | Resets the daily tracking state for a new day |
+| ⏰ **RTC Timekeeping** | Maintains the current time for reminder scheduling |
+| 💧 **Water Intake Tracking** | Tracks the number of glasses consumed |
+| 🎯 **Daily Goal** | Allows a configurable daily hydration target |
+| 🔔 **Hydration Reminder** | Generates reminders at the configured interval |
+| 📺 **LCD Interface** | Displays time, progress, reminders, and menu information |
+| ⌨️ **4×4 Keypad** | Used for menu navigation and numeric input |
+| ⚡ **External Interrupt** | Opens the configuration menu |
+| 🔊 **Buzzer Alert** | Provides an audible reminder |
+| 🟡 **Yellow LED** | Indicates that it is time to drink |
+| 🟢 **Green LED** | Indicates that the daily goal has been achieved |
+| 🔴 **Red LED** | Indicates missed/behind hydration status |
+| 🌙 **Midnight Reset** | Resets daily consumption tracking for the new day |
 
 ---
 
-## 📊 3. Hydration Tracking Model
+# 🧩 5. System Block Diagram
 
-The application maintains three main values:
+The project block diagram supplied with the project documentation is included below.
+
+<p align="center">
+  <img src="docs/images/block-diagram.png" alt="AquaGuardian LPC2148 block diagram" width="850">
+</p>
+
+### System Blocks
+
+```text
+                    ┌───────────────┐
+                    │     KEYPAD    │
+                    └───────┬───────┘
+                            │
+                            ▼
+                  ┌───────────────────┐
+                  │                   │
+     SWITCH ─────►│                   │─────► LCD
+      EINT0       │      LPC2148      │
+                  │        + RTC      │
+ DRINK BUTTON ───►│                   │─────► GREEN LED
+                  │                   │─────► YELLOW LED
+                  │                   │─────► RED LED
+                  │                   │─────► BUZZER
+                  └───────────────────┘
+```
+
+The block diagram represents the main functional relationship between the LPC2148, RTC, keypad, switches, Drink button, LCD, LEDs, and buzzer.
+
+---
+
+# 🏗️ 6. System Architecture
+
+```mermaid
+flowchart LR
+    KP[4x4 Matrix Keypad] --> MCU[LPC2148]
+    SW[Configuration Switch] --> MCU
+    DB[Drink Button] --> MCU
+    RTC[RTC] --> MCU
+
+    MCU --> LCD[16x2 LCD]
+    MCU --> GL[Green LED]
+    MCU --> YL[Yellow LED]
+    MCU --> RL[Red LED]
+    MCU --> BZ[Buzzer]
+```
+
+---
+
+# 🔄 7. Project Workflow
+
+```mermaid
+flowchart TD
+    A[Power ON] --> B[Initialize LPC2148]
+    B --> C[Initialize External Interrupt]
+    C --> D[Initialize Keypad]
+    D --> E[Initialize RTC]
+    E --> F[Initialize LCD]
+    F --> G[Initialize LCD Custom Characters]
+    G --> H[Main Application Loop]
+
+    H --> I[Read RTC Time]
+    I --> J[Display Time & Hydration Progress]
+
+    J --> K{Reminder Due?}
+
+    K -- No --> L{Drink Button Pressed?}
+    K -- Yes --> M[Activate Reminder]
+    M --> N[Yellow LED + Buzzer]
+    N --> O[Display Drink Water Message]
+    O --> P{Drink Recorded?}
+
+    P -- Yes --> Q[Increment Consumed Count]
+    Q --> R[Update Remaining Goal]
+    R --> S{Goal Achieved?}
+    S -- Yes --> T[Green LED + Goal Achieved]
+    S -- No --> H
+
+    P -- No --> U[Missed / Reminder State]
+    U --> H
+
+    L -- Yes --> V[Process Water Consumption]
+    V --> Q
+
+    L -- No --> W{Configuration Switch?}
+    W -- Yes --> X[External Interrupt Menu]
+    X --> Y{Menu Option}
+    Y -->|TIME| Z[Update RTC]
+    Y -->|GOALS| AA[Update Goal / Duration]
+    Y -->|EXIT| H
+    Z --> H
+    AA --> H
+
+    W -- No --> AB{Midnight?}
+    AB -- Yes --> AC[Reset Daily Tracking]
+    AC --> H
+    AB -- No --> H
+```
+
+---
+
+# 💧 8. Hydration Tracking
+
+The firmware maintains the following values:
 
 ```text
 dg = Daily Goal
@@ -84,135 +188,54 @@ The remaining target is calculated as:
 rg = dg - cg
 ```
 
-Example:
+For example:
 
 ```text
-Daily Goal      = 16
-Consumed        = 5
-Remaining       = 11
+Daily Goal  : 16
+Consumed    : 5
+Remaining   : 11
 ```
 
-The LCD can present the progress in a compact format.
+The LCD display module presents the consumed and remaining values together with the current RTC time.
 
 ---
 
-## 🧩 4. System Architecture
+# ⏰ 9. Reminder System
 
-```mermaid
-flowchart TD
-    KP[4x4 Matrix Keypad] --> APP
-    SW[Configuration Switch] --> INT[EINT0 External Interrupt]
-    DR[Drink Button] --> APP
+During normal operation, the controller continuously compares the RTC time with the next scheduled reminder.
 
-    RTC[RTC] --> APP
-    INT --> MENU[Configuration Menu]
-    KP --> MENU
+When the reminder condition is reached:
 
-    APP[LPC2148 Application Controller]
-    MENU --> APP
+1. The reminder state is activated.
+2. The LCD displays a hydration message.
+3. The buzzer provides an audible alert.
+4. The Yellow LED indicates the reminder state.
+5. The user can acknowledge the reminder by pressing the Drink button.
 
-    APP --> LCD[16x2 LCD]
-    APP --> LEDG[Green LED]
-    APP --> LEDY[Yellow LED]
-    APP --> LEDR[Red LED]
-    APP --> BUZ[Buzzer]
-
-    APP --> REM[Reminder Logic]
-    REM --> LCD
-    REM --> LEDY
-    REM --> LEDR
-    REM --> BUZ
-```
-
-GitHub supports Mermaid diagrams directly inside Markdown code fences, so the architecture can render on the repository page without creating a separate diagram image. citeturn0search1turn0search4
+The firmware uses a reminder timing mechanism based on the RTC minute value and the configured reminder interval.
 
 ---
 
-## 🔌 5. Hardware Configuration
+# 📺 10. LCD Interface
 
-The project documentation identifies the following hardware:
-
-| Hardware | Purpose |
-|---|---|
-| **LPC2148** | Main ARM7 microcontroller |
-| **16×2 LCD** | User interface and system information |
-| **4×4 Matrix Keypad** | Menu navigation and numeric input |
-| **RTC** | Timekeeping and reminder scheduling |
-| **Green LED** | Goal achieved indication |
-| **Yellow LED** | Hydration reminder indication |
-| **Red LED** | Missed/behind hydration indication |
-| **Drink Button** | Records water consumption |
-| **Configuration Switch** | Activates external interrupt/menu |
-| **Buzzer** | Audible hydration alert |
-| **USB-UART / DB-9** | Programming/serial interface |
-
-> **Pin mapping:** The exact application pin mapping is defined by the project's header/definition files. It should be documented here from the final hardware schematic rather than inferred.
-
----
-
-## 🔄 6. End-to-End Flow
-
-```mermaid
-flowchart TD
-    A[Power ON] --> B[Initialize LPC2148]
-    B --> C[Initialize Interrupt]
-    C --> D[Initialize Keypad]
-    D --> E[Initialize RTC]
-    E --> F[Initialize LCD]
-    F --> G[Load LCD Custom Characters]
-    G --> H[Enter Main Loop]
-
-    H --> I[Read RTC / Display Status]
-    I --> J{Configuration Switch?}
-
-    J -- Yes --> K[External Interrupt]
-    K --> L[Configuration Menu]
-    L --> M{Select Option}
-    M -->|Time| N[Update RTC Time]
-    M -->|Goals| O[Update Goal / Duration]
-    M -->|Exit| H
-    N --> H
-    O --> H
-
-    J -- No --> P{Reminder Due?}
-    P -- No --> Q{Drink Button?}
-    P -- Yes --> R[Activate Buzzer + Yellow LED]
-    R --> S[Display TIME TO HYDRATE]
-    S --> T{Drink Recorded?}
-
-    T -- Yes --> U[Increment Consumed]
-    U --> V[Update Remaining]
-    V --> W{Goal Achieved?}
-    W -- Yes --> X[Green LED + Goal Achieved]
-    W -- No --> H
-
-    T -- No --> Y[Reminder / Missed Status]
-    Y --> H
-
-    Q -- Yes --> Z[Middle Drink Confirmation]
-    Z --> U
-
-    Q -- No --> AA{Midnight?}
-    AA -- Yes --> AB[Reset Daily Tracking]
-    AB --> H
-    AA -- No --> H
-```
-
----
-
-## 🖥️ 7. LCD Interface
+The project uses a **16×2 LCD** for the main user interface.
 
 ### Normal Monitoring
 
-The LCD presents the current time and hydration progress.
+The LCD displays:
+
+- Current RTC time
+- Consumed glasses
+- Daily goal
+- Remaining glasses
 
 <p align="center">
-  <img src="docs/images/lcd-normal.png" alt="AquaGuardian normal LCD screen" width="650">
+  <img src="docs/images/lcd-normal.png" alt="AquaGuardian normal monitoring LCD" width="700">
 </p>
 
 ### Hydration Reminder
 
-When the reminder condition occurs, the LCD displays:
+The firmware displays:
 
 ```text
 TIME TO HYDRATE
@@ -220,12 +243,12 @@ DRINK WATER!!
 ```
 
 <p align="center">
-  <img src="docs/images/lcd-reminder.png" alt="AquaGuardian hydration reminder LCD" width="650">
+  <img src="docs/images/lcd-reminder.png" alt="AquaGuardian hydration reminder LCD" width="700">
 </p>
 
 ### Goal Achieved
 
-When the consumed count reaches the daily goal:
+When the daily goal is achieved:
 
 ```text
 CONGRATULATION
@@ -233,12 +256,12 @@ GOAL ACHIEVED
 ```
 
 <p align="center">
-  <img src="docs/images/lcd-goal-achieved.png" alt="AquaGuardian goal achieved LCD" width="650">
+  <img src="docs/images/lcd-goal-achieved.png" alt="AquaGuardian goal achieved LCD" width="700">
 </p>
 
 ### Configuration Menu
 
-The external-interrupt menu provides options such as:
+The external interrupt opens the configuration menu:
 
 ```text
 1. TIME   2. GOALS
@@ -246,16 +269,16 @@ The external-interrupt menu provides options such as:
 ```
 
 <p align="center">
-  <img src="docs/images/lcd-menu.png" alt="AquaGuardian configuration menu LCD" width="650">
+  <img src="docs/images/lcd-menu.png" alt="AquaGuardian configuration menu LCD" width="700">
 </p>
 
-> **Note:** These LCD visuals are README demonstration/mockup images based on the messages implemented in the firmware. Replace them with photographs of the actual hardware LCD output when available.
+> **Note:** The LCD images above are documentation mockups based on the messages implemented in the firmware. Replace them with photographs of the actual LCD output when available.
 
 ---
 
-## ⌨️ 8. Keypad Layout
+# ⌨️ 11. 4×4 Keypad
 
-The firmware uses the following 4×4 keypad lookup table:
+The keypad driver uses a row/column scanning technique.
 
 ```text
 +---+---+---+---+
@@ -269,48 +292,132 @@ The firmware uses the following 4×4 keypad lookup table:
 +---+---+---+---+
 ```
 
-The keypad driver scans rows and columns and maps the detected position to the corresponding key.
+### Numeric Input
 
-For numeric entry:
-
-- `0–9` → Enter digits
+- `0–9` → Enter numeric values
 - `B` → Backspace
-- `E` → Confirm / Enter
-- Invalid input → Rejected and re-prompted
+- `E` → Confirm input
+- Invalid values → Rejected and requested again
 
 ---
 
-## ⚙️ 9. Configuration Menu
+# ⚡ 12. External Interrupt & Configuration Menu
 
-A dedicated switch connected to the external interrupt opens the configuration interface.
+A dedicated switch activates **EINT0** and opens the configuration menu.
 
-### TIME
+The firmware configures EINT0 on **P0.1**.
+
+The menu provides:
+
+```text
+1. TIME
+2. GOALS
+3. EXIT
+```
+
+### Time Configuration
+
+The user can update:
+
+- Hours: `0–23`
+- Minutes: `0–59`
+
+The firmware validates the entered values before updating the RTC.
+
+### Goal Configuration
 
 The user can modify:
 
-```text
-Hours   : 0–23
-Minutes : 0–59
-```
-
-### GOALS
-
-The user can modify the hydration reminder configuration, including:
-
+- Daily hydration goal
 - Reminder duration/interval
-- Number of daily goals
 
-The firmware validates user input before applying the new value.
+The firmware checks the entered values before applying them.
 
 ---
 
-## 🧠 10. Software Architecture
+# 🔌 13. LCD Interface Connections
+
+The LCD driver configures the following LPC2148 pins:
+
+| LCD Signal | LPC2148 |
+|---|---|
+| D0 | P0.8 |
+| D1 | P0.9 |
+| D2 | P0.10 |
+| D3 | P0.11 |
+| D4 | P0.12 |
+| D5 | P0.13 |
+| D6 | P0.14 |
+| D7 | P0.15 |
+| RS | P0.16 |
+| RW | P0.17 |
+| EN | P0.18 |
+
+These connections are taken directly from the LCD initialization code.
+
+---
+
+
+# 🔌 14. Circuit Schematic
+
+A Proteus-style circuit representation is included below to show the major hardware interfaces of the AquaGuardian system.
+
+<p align="center">
+  <img src="docs/images/circuit-schematic.png" alt="AquaGuardian circuit schematic" width="1100">
+</p>
+
+### Main Interfaces
+
+| Interface | Connection / Function |
+|---|---|
+| LPC2148 | Main ARM7 microcontroller |
+| 16×2 LCD | Display and user interface |
+| 4×4 Keypad | Menu navigation and numeric input |
+| RTC | Timekeeping and reminder scheduling |
+| EINT0 Switch | Opens configuration menu |
+| Drink Button | Records water consumption |
+| Green LED | Goal achieved indication |
+| Yellow LED | Hydration reminder indication |
+| Red LED | Missed/behind hydration indication |
+| Buzzer | Audible reminder |
+
+> **Important:** The schematic illustration is intended for documentation/visualization. The exact electrical pin mapping should always be verified against the final Proteus schematic, header definitions, and physical hardware before building the circuit.
+
+# 🧰 15. Hardware Requirements
+
+| Component | Purpose |
+|---|---|
+| **LPC2148** | Main ARM7 microcontroller |
+| **16×2 LCD** | Display interface |
+| **4×4 Matrix Keypad** | Menu and numeric input |
+| **RTC** | Real-time clock and scheduling |
+| **Green LED** | Goal achieved |
+| **Yellow LED** | Reminder state |
+| **Red LED** | Missed/behind hydration indication |
+| **Drink Button** | Records water consumption |
+| **Configuration Switch** | Activates EINT0 |
+| **Buzzer** | Audible reminder |
+| **USB-UART / DB-9 Cable** | Programming/communication |
+
+---
+
+# 💻 16. Software Requirements
+
+- Embedded C
+- LPC2148 development environment
+- ARM7-compatible compiler/IDE
+- Flash Magic
+- LPC2148 hardware board
+
+---
+
+# 🧠 17. Software Architecture
 
 ```mermaid
 flowchart TD
-    MAIN[main.c<br/>Application Loop]
+    MAIN[main.c<br/>Main Application]
 
-    MAIN --> DISPLAY[display.c<br/>Display Logic]
+    MAIN --> DISPLAY[display.c<br/>Display]
     MAIN --> REM[reminder.c<br/>Reminder Logic]
     MAIN --> MID[middlecheck.c<br/>Drink Confirmation]
 
@@ -323,7 +430,7 @@ flowchart TD
     MID --> KPM[KPM.c<br/>Keypad Driver]
     MID --> LCD
 
-    INT[interrupt.c<br/>EINT0 + Menu] --> KPM
+    INT[interrupt.c<br/>External Interrupt + Menu] --> KPM
     INT --> LCD
     INT --> RTC
 
@@ -333,25 +440,11 @@ flowchart TD
     DELAY --> INT
 ```
 
-### Module Responsibilities
-
-| Module | Responsibility |
-|---|---|
-| `main.c` | Main application loop and overall hydration state management |
-| `display.c` | Displays RTC time and hydration progress |
-| `interrupt.c` | EINT0 configuration and configuration menu |
-| `KPM.c` | 4×4 keypad scanning and numeric input |
-| `lcd.c` | Low-level 16×2 LCD driver |
-| `rtc_main.c` | RTC initialization, time/date read/write and display |
-| `reminder.c` | Reminder timing, buzzer and LED handling |
-| `middlecheck.c` | Handles water consumption confirmation |
-| `delay.c` | Software delay routines |
-
 ---
 
-## 📁 11. Repository Structure
+# 📁 18. Project Structure
 
-Recommended GitHub structure:
+Recommended GitHub repository structure:
 
 ```text
 AquaGuardian/
@@ -379,43 +472,79 @@ AquaGuardian/
 │   └── delay.c
 │
 ├── docs/
-│   ├── images/
-│   │   ├── lcd-normal.png
-│   │   ├── lcd-reminder.png
-│   │   ├── lcd-goal-achieved.png
-│   │   └── lcd-menu.png
-│   └── project-report.pdf
+│   └── images/
+│       ├── block-diagram.png
+│       ├── lcd-normal.png
+│       ├── lcd-reminder.png
+│       ├── lcd-goal-achieved.png
+│       └── lcd-menu.png
 │
 └── README.md
 ```
 
-> Keep the actual filenames and folders consistent with your final GitHub repository. If your `.h` files are currently in the root directory, you can move them into `inc/` after updating the project include paths.
+---
+
+# 🧩 19. Source File Description
+
+| File | Responsibility |
+|---|---|
+| `main.c` | Main application loop and hydration state management |
+| `display.c` | Displays RTC time and hydration information |
+| `interrupt.c` | EINT0 configuration and menu handling |
+| `KPM.c` | Keypad scanning and numeric input |
+| `lcd.c` | 16×2 LCD driver |
+| `rtc_main.c` | RTC initialization and time/date functions |
+| `reminder.c` | Reminder logic, buzzer and LED handling |
+| `middlecheck.c` | Drink confirmation and consumption update |
+| `delay.c` | Software delay routines |
 
 ---
 
-## 🧪 12. Testing & Validation
+# 🔧 20. Embedded Concepts Demonstrated
+
+This project demonstrates practical embedded-system concepts including:
+
+- ARM7 / LPC2148 programming
+- Embedded C
+- GPIO configuration
+- Bit manipulation
+- LCD interfacing
+- 4×4 matrix keypad scanning
+- RTC programming
+- External interrupt handling
+- VIC interrupt configuration
+- LED and buzzer control
+- Input validation
+- Modular firmware development
+- Time-based event scheduling
+- LCD CGRAM/custom characters
+- State-based application logic
+
+---
+
+# 🧪 21. Testing
 
 | Test Case | Expected Result |
 |---|---|
-| Power ON | All configured peripherals initialize |
-| RTC initialization | Current time becomes available |
-| LCD test | Time and hydration information are displayed |
-| Keypad test | Pressed key is detected correctly |
-| Drink button | Consumed count increases |
-| Reminder time reached | Buzzer + Yellow LED + LCD reminder |
-| Drink acknowledged | Consumption and remaining target update |
-| Daily goal reached | Goal-achieved message + Green LED |
-| Configuration switch | EINT0 menu opens |
-| Invalid hour | Input rejected |
-| Invalid minute | Input rejected |
-| Invalid goal | Input rejected |
-| Midnight | Daily tracking values reset |
+| Power ON | Peripheral initialization completes |
+| RTC | Current time is available |
+| LCD | Time and hydration information appear |
+| Keypad | Pressed key is detected |
+| Drink Button | Consumption count increases |
+| Reminder | Buzzer + Yellow LED + LCD reminder |
+| Drink Acknowledgement | Progress updates |
+| Goal Achieved | Green LED + achievement message |
+| Configuration Switch | EINT0 menu opens |
+| Invalid Hour | Input rejected |
+| Invalid Minute | Input rejected |
+| Invalid Goal | Input rejected |
+| Midnight | Daily tracking resets |
 
 ---
 
-## 🛠️ 13. Troubleshooting
+# 🛠️ 22. Troubleshooting
 
-### LCD is blank
+### LCD not displaying
 
 Check:
 
@@ -423,160 +552,124 @@ Check:
 - LCD data/control connections.
 - GPIO direction configuration.
 - LCD initialization sequence.
-- Correct header definitions.
 
-### Keypad does not respond
+### Keypad not responding
 
 Check:
 
-- Row/column wiring.
-- GPIO direction.
-- Keypad pin definitions.
-- Pull-up/pull-down requirements.
+- Row/column connections.
+- GPIO configuration.
+- Keypad definitions.
 - Debounce timing.
 
-### RTC time is incorrect
+### RTC not working correctly
 
 Check:
 
 - RTC clock source.
-- 32.768 kHz crystal configuration where applicable.
 - RTC initialization.
-- Time-setting routine.
-- LPC2148 power/backup configuration.
+- Time-setting logic.
+- Hardware clock configuration.
 
-### Reminder does not trigger
+### Reminder not triggering
 
 Check:
 
 - RTC minute/second values.
-- Reminder interval configuration.
-- `alarm` and `check_al` state.
-- Daily goal condition.
-- Buzzer and Yellow LED GPIO configuration.
+- Reminder interval.
+- `alarm` and `check_al` variables.
+- Buzzer and LED connections.
 
-### External interrupt does not open the menu
+### Configuration menu not opening
 
 Check:
 
-- EINT0 pin configuration.
+- EINT0 connection on P0.1.
 - VIC interrupt configuration.
-- Interrupt vector assignment.
-- `EXTMODE` configuration.
+- External interrupt configuration.
 - Interrupt status clearing.
 
 ---
 
-## 💻 14. Development Environment
+# 🎯 23. Applications
 
-### Microcontroller
-
-**NXP LPC2148 — ARM7TDMI-S**
-
-### Programming Language
-
-**Embedded C**
-
-### Programming Tool
-
-**Flash Magic**
-
-### Interfaces / Peripherals
-
-- GPIO
-- RTC
-- 16×2 LCD
-- 4×4 Matrix Keypad
-- External Interrupt
-- LEDs
-- Buzzer
-- Push Buttons
-
----
-
-## 🧱 15. Embedded Concepts Demonstrated
-
-This project demonstrates practical embedded-system concepts:
-
-- ARM7/LPC2148 architecture
-- Embedded C programming
-- GPIO configuration
-- Bit manipulation
-- LCD interfacing
-- Matrix keypad scanning
-- RTC programming
-- External interrupt handling
-- Interrupt vector configuration
-- Buzzer and LED control
-- User-interface design
-- Input validation
-- Modular firmware design
-- State-based application logic
-- Custom LCD characters / CGRAM
-- Time-based event scheduling
-
----
-
-## 🎯 16. Applications
-
-AquaGuardian can serve as a foundation for:
+AquaGuardian can be used as a foundation for:
 
 - Personal hydration reminder devices
+- Smart desk wellness devices
 - Embedded healthcare assistants
-- Smart desk accessories
 - Elderly-care reminder systems
-- Office/workplace wellness devices
-- IoT-based hydration monitoring systems
+- Workplace hydration systems
+- Future IoT-based hydration monitoring
 
 ---
 
-## 🔮 17. Future Improvements
+# 🔮 24. Future Improvements
 
-Possible extensions include:
+Possible future improvements include:
 
-- Automatic water-volume measurement using a flow/level sensor.
-- EEPROM/Flash storage for persistent user settings.
-- Bluetooth or Wi-Fi connectivity.
+- Automatic water-volume measurement.
+- EEPROM/Flash storage for configuration.
+- Bluetooth connectivity.
+- Wi-Fi/IoT connectivity.
 - Mobile application integration.
 - Cloud-based hydration history.
-- Multiple user profiles.
-- Personalized hydration schedules.
-- Low-power sleep modes.
+- User-specific hydration profiles.
 - Daily/weekly hydration statistics.
-- Automatic recommended-intake calculation.
+- Low-power operation.
+- Personalized reminder schedules.
 
 ---
 
-## 📸 18. Project Images
+# 📸 25. Project Images
 
-Add actual project photographs here when available:
+The `docs/images/` directory is intended for project photographs and screenshots.
+
+Recommended additions:
 
 ```text
 docs/images/
+├── block-diagram.png
 ├── hardware.jpg
 ├── circuit.jpg
 ├── lcd-normal.jpg
 ├── lcd-reminder.jpg
-└── block-diagram.png
+└── lcd-goal-achieved.jpg
 ```
 
-Example Markdown:
+Example:
 
 ```markdown
 ![AquaGuardian Hardware](docs/images/hardware.jpg)
-![Circuit Diagram](docs/images/circuit.jpg)
-![LCD Output](docs/images/lcd-reminder.jpg)
 ```
 
 ---
 
-## 📚 19. Documentation
+# 📚 26. Documentation
 
-The project documentation covers the system objective, hardware/software requirements, block diagram, workflow, hydration tracking, LED states, buzzer alerts, configuration menu, and daily reset behavior.
+The project documentation defines AquaGuardian as a smart water-drinking reminder system that combines:
+
+```text
+RTC Scheduling
+       +
+Hydration Tracking
+       +
+LCD Display
+       +
+Keypad Interface
+       +
+External Interrupt
+       +
+LED Indication
+       +
+Buzzer Alert
+       ↓
+AquaGuardian
+```
 
 ---
 
-## 👨‍💻 20. Author
+# 👨‍💻 27. Author
 
 **Joel Ughade**
 
@@ -585,33 +678,14 @@ Embedded Systems & IoT Enthusiast
 
 ---
 
-## ⭐ Project Summary
-
-```text
-RTC
- │
- ▼
-LPC2148 ───────► LCD
- │
- ├─────────────► Keypad
- │
- ├─────────────► Drink Button
- │
- ├─────────────► Green LED
- │
- ├─────────────► Yellow LED
- │
- ├─────────────► Red LED
- │
- └─────────────► Buzzer
-```
-
-**AquaGuardian combines RTC-based scheduling, Embedded C, LCD interfacing, keypad input, external interrupts, hydration tracking, LED status indication, and audible alerts into a compact LPC2148 embedded application.**
-
----
-
-## 📜 License
+# 📜 28. License
 
 This project is intended for educational, learning, and portfolio purposes.
 
 If you reuse or modify the project, please provide appropriate attribution to the original author.
+
+---
+
+<p align="center">
+  <b>💧 AquaGuardian — Stay Hydrated, Stay Healthy.</b>
+</p>
