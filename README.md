@@ -4,9 +4,6 @@
   <b>RTC-Based Smart Hydration Reminder and Water Intake Monitoring System using LPC2148</b>
 </p>
 
-<p align="center">
-  <img src="docs/images/block-diagram.png" alt="AquaGuardian system block diagram" width="850">
-</p>
 
 ---
 
